@@ -1,0 +1,51 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+# Module 6 - Assignment 1
+## MacBride, Erica
+### Lubridate
+
+```{r Loading Packages, message=FALSE}
+library("tidyverse")
+library("lubridate")
+Appointments <- read_csv("Appointments.csv")
+```
+
+### Working with Dates
+```{r Creating Reservation Year}
+Appointments <- mutate(Appointments, "ReservationYear" = 2019 )
+Appointments <- mutate(Appointments, "ReservationDate"= make_date(month=ReservationMonth,day=ReservationDay,year=ReservationYear))
+Appointments <- mutate(Appointments, "CreationDate" = make_date(month=CreationMonth, day=CreationDay, year=CreationYear))
+Appointments <- mutate(Appointments, "ReservationSpan" = ReservationDate - CreationDate)
+```
+
+### Exploratory Analysis
+```{r}
+summary(Appointments)
+Appointments$ReservationSpan <- as.numeric(Appointments$ReservationSpan)
+summary(Appointments)
+```
+a. What is the average time between appointment creation and the actual reservation date?
+  38.53 days
+
+b. What was the max time?
+  207 days
+
+c. What was the min time?
+  1 day
+  
+```{r}
+cor(Appointments$ReservationSpan, Appointments$Show)
+```
+  a. Are ReservationSpan and Show highly correlated?
+      No, reservation span and show are not highly correlated.  
+
+```{r}
+ggplot(Appointments, aes(Show))+
+  geom_bar()
+```
+a. Based on 0 being “no show” and 1 being “show”, did most people make their appointments?
+  Yes, most people made their appointments.
+

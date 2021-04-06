@@ -1,0 +1,109 @@
+---
+output:
+  word_document: default
+  html_document: default
+---
+# Module 5 - Assignment 1
+## MacBride, Erica
+### Data Wrangling
+
+```{r}
+library(tidyverse)
+library(readxl)
+UN_migrant <- read_excel("UN_migrant.xlsx", 
+    sheet = "Table 6", col_types = c("numeric", 
+        "text", "text", "numeric", "text", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric"), skip = 15)
+```
+
+### Part 2 - Cleaning Data with dplyr
+```{r Renaming Columns}
+UN_migrant<- rename(UN_migrant, Country = "...2", Country_Code = "...4", Type = "...5", "1990" = "1990...6", "1995" = "1995...7", "2000" = "2000...8", "2005" = "2005...9", "2010" = "2010...10", "2015" = "2015...11")
+```
+
+```{r New Subset}
+Migration <- select(UN_migrant, Country, Country_Code, Type, "1990", "1995", "2000", "2005", "2010", "2015")
+```
+
+### Creating Tidy data using tidyr
+```{r Migration Tidy}
+Migration2 <- pivot_longer(Migration, c("1990", "1995", "2000", "2005", "2010", "2015"), names_to = "Year",values_to = "Cases" )
+Migration2$Year <- as.integer(Migration2$Year)
+```
+
+### Part 4 - Research Questions
+```{r New Subsets}
+RegionalMigration <- Migration2 %>%
+  filter(Country %in% c("Africa", "Asia", "Europe","Oceania", "Northern America", "South America"))
+
+Americas <- Migration2 %>% 
+  filter(Country %in% c("Central America", "South America", "Northern America"))
+```
+
+### Worldwide Migration based on Regions
+Which region in the world has the highest number of migrants in the year 2005? Asia.
+Over the years, which region consistently has the most migrants every 5 year span? Which has the second most?
+
+```{r}
+ggplot(data=RegionalMigration, aes(x=Year, y=Cases, color = Country)) +
+  geom_point() +
+  labs(title = "Worldwide Migration",
+       x = "Year",
+       y = "Migrants")
+
+ggplot(data=RegionalMigration, aes(x=Year, y=Cases, fill = Country)) +
+  geom_col() +
+  scale_fill_discrete(name= "Region of World") +
+  labs(title = "Worldwide Migration",
+       x = "Year",
+       y = "Migrants")
+```
+Which region in the world has the highest number of migrants in the year 2005? 
+    Asia.
+
+Over the years, which region consistently has the most migrants every 5 year span? Which has the second most?
+    Asia has the most migrants every 5 years. Africa has the second most. 
+
+What region has seen the fewest migrants over the years?
+    Oceania.
+
+Which plot was most useful in answering these questions and why?
+    The bar plot with fill was most useful in answering these questions, as the fill illustrates a better idea of how      many migrants vs. the scatterplot.
+
+### Americas Migration by Region
+
+```{r}
+ggplot(data=Americas, aes(x=Year, y=Cases, color = Country)) +
+  geom_point() +
+  labs(title = "Worldwide Migration",
+       x = "Year",
+       y = "Migrants")
+
+ggplot(data=Americas, aes(x=Year, y=Cases, fill = Country)) +
+  geom_col() +
+  scale_fill_discrete(name= "Americas Region") +
+  labs(title = "Worldwide Migration",
+       x = "Year",
+       y = "Migrants")
+```
+
+a. In 1990, which region had the largest number of migrants for the Americas?
+    Central America.
+
+b. Has this region continued to grow since 1990?
+    Northern America. 
+
+c. What trends do you notice happening in the Americas over the years?
+    Central America saw a large increase in migrants in 1990 but then experience a significant decrease. Northern          America has seen a a steady trend in migrants from 1990 to 2015 although it is decreasing. South America follows a     a steady pattern of migrants increasing and decreasing around the same levels until 2010-2015 with a rapid             increase.
+    
+d. Specifically, has Northern America increased or decreased over the years?
+    Decreased since 1995.
+    
+e. Which plot was most useful in answering these questions and why?
+    The scatterplot as it shows trends much easier. 
+    
